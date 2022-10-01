@@ -1,0 +1,17 @@
+.dropdown{
+    position: relative;
+    background-color: whitesmoke;
+    color: black;
+    width: 300px;
+    text-align: left;
+}
+li{
+    list-style-type: none;
+    border-bottom: 1pt solid black;
+    border-left: 1pt solid black;
+    border-right: 1pt solid black;
+}
+li:hover, li:focus{
+    text-decoration: underline;
+    cursor: pointer;
+}

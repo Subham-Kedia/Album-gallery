@@ -1,25 +1,46 @@
-import logo from './logo.svg';
+import React,{useEffect, useState} from 'react';
 import './App.css';
+import Header from './component/Header';
+import Body from './component/body';
+
+const getDataFromls = () => {
+  const retrieveData =JSON.parse(localStorage.getItem("queries"));
+  if(retrieveData) 
+  {
+    return retrieveData
+  }else{
+    return []
+  }
+};
 
 function App() {
+
+  const [query,setQuery] = useState('');
+  const [localStore,setLocalStore] = useState(getDataFromls());
+
+  const handleInput = (ele) =>
+  {
+    setQuery(ele);
+  }
+  useEffect(()=>{
+    if(query!=="" && !(localStore.includes(query))){
+      if(localStore.length <= 50){
+        setLocalStore([...localStore,query].sort());
+      }
+      
+    }
+  },[query]);
+
+  useEffect(()=>{
+    localStorage.setItem("queries",JSON.stringify(localStore));
+  },[localStore]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header handleInput={handleInput} query={query} localStore={localStore}/>
+      <Body query={query}/>
     </div>
-  );
+    );
 }
 
 export default App;
