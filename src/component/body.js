@@ -91,7 +91,7 @@ const Body = (props)=>{
                 </div>  
                  :null
             }
-        
+        // implementing Infinite Scroll
         <InfiniteScroll
             dataLength= {images.length}
             next={fetchMoreData}
