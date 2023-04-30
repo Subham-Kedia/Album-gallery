@@ -53,7 +53,7 @@ const Body = ({ query, deviceData }) => {
           text: query,
           per_page: LIMIT,
           page: page.current,
-          safe_search:1,
+          safe_search: 1,
           format: "json",
           jsoncallback: 1,
         },
@@ -84,7 +84,7 @@ const Body = ({ query, deviceData }) => {
           api_key: process.env.REACT_APP_FLICKER_API_KEY,
           per_page: LIMIT,
           page: page.current,
-          safe_search:1,
+          safe_search: 1,
           format: "json",
           jsoncallback: 1,
         },
@@ -110,9 +110,64 @@ const Body = ({ query, deviceData }) => {
   useEffect(() => {
     page.current = 1
     if (query !== "") {
-      getSearchbasedImageList()
+        axios
+        .get(FLICKER_BASE_URL, {
+          params: {
+            method: FLICKER_METHODS.SEARCH,
+            api_key: process.env.REACT_APP_FLICKER_API_KEY,
+            text: query,
+            per_page: LIMIT,
+            page: page.current,
+            safe_search: 1,
+            format: "json",
+            jsoncallback: 1,
+          },
+        })
+        .then((res) => {
+          const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+          if (isfetchingmore.current) {
+            setImages(prevData => ([...prevData, ...data.photos.photo]))
+            isfetchingmore.current = false
+            if (data.photos.photo.length < LIMIT) {
+              setHasmore(false)
+            }
+          } else {
+            setImages(data.photos.photo)
+            if (data.photos.photo.length < LIMIT) {
+              setHasmore(false)
+            }
+          }
+        })
+        .catch((err) => console.error(err))
     } else {
-      getRecentImageList()
+        axios
+        .get(FLICKER_BASE_URL, {
+          params: {
+            method: FLICKER_METHODS.GET_RECENT,
+            api_key: process.env.REACT_APP_FLICKER_API_KEY,
+            per_page: LIMIT,
+            page: page.current,
+            safe_search: 1,
+            format: "json",
+            jsoncallback: 1,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.substring(2, res.data.length - 1))
+          const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+          if (isfetchingmore.current) {
+            setImages(prevData => ([...prevData, ...data.photos.photo]))
+            isfetchingmore.current = false
+            if (data.photos.photo.length === LIMIT) {
+              setHasmore(true)
+            }
+          } else {
+            setImages(data.photos.photo)
+            if (data.photos.photo.length === LIMIT) {
+              setHasmore(true)
+            }
+          }
+        })
     }
   }, [query])
 

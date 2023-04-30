@@ -4,18 +4,18 @@ import Header from "./component/Header"
 import Body from "./component/body"
 import Footer from "./component/footer"
 
-const getDataFromls = () => {
-  const retrieveData = JSON.parse(localStorage.getItem("queries"))
-  if (retrieveData) {
-    return retrieveData
-  } else {
-    return []
-  }
-}
+// const getDataFromls = () => {
+//   const retrieveData = JSON.parse(localStorage.getItem("queries"))
+//   if (retrieveData) {
+//     return retrieveData
+//   } else {
+//     return []
+//   }
+// }
 
 function App() {
   const [userInput, setUserInput] = useState("")
-  const [localStore, setLocalStore] = useState(getDataFromls())
+  // const [localStore, setLocalStore] = useState(getDataFromls())
   const [deviceData, setDeviceData] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -25,17 +25,17 @@ function App() {
     setUserInput(ele)
   }
 
-  useEffect(() => {
-    if (userInput !== "" && !localStore.includes(userInput)) {
-      if (localStore.length <= 50) {
-        setLocalStore([...localStore, userInput].sort())
-      }
-    }
-  }, [userInput])
+  // useEffect(() => {
+  //   if (userInput !== "" && !localStore.includes(userInput)) {
+  //     if (localStore.length <= 50) {
+  //       setLocalStore([...localStore, userInput].sort())
+  //     }
+  //   }
+  // }, [userInput])
 
-  useEffect(() => {
-    localStorage.setItem("queries", JSON.stringify(localStore))
-  }, [localStore])
+  // useEffect(() => {
+  //   localStorage.setItem("queries", JSON.stringify(localStore))
+  // }, [localStore])
 
   useEffect(() => {
     console.log("abcdef")
