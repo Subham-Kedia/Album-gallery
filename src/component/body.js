@@ -1,127 +1,173 @@
-import React,{useState,useEffect, useRef} from "react";
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Row,Col } from "antd";
+import React, { useState, useEffect, useRef } from "react"
+import InfiniteScroll from "react-infinite-scroll-component"
+import { Row, Col, Spin } from "antd"
 
-import axios from "axios";
-import '../styles/body.css'
+import { FLICKER_BASE_URL } from "../data/urls"
+import { FLICKER_METHODS } from "../data/constants"
 
-const Body = (props)=>{
+import axios from "axios"
+import "../styles/body.css"
 
-    const [images,setImages]= useState([]);
-    const isfetchingmore = useRef(false);
-    const [hasmore,setHasmore] = useState(true);
-    const page = useRef(1);
-    const [clicked,setClicked]=useState(false);
-    const [modalUrl,setModalUrl]= useState("");
-    
-    const fetchMoreData = ()=>{
-        page.current=page.current+1;
-        isfetchingmore.current=true;
-        console.log(1)
-        if(props.query!==""){
-            Myobj()
-        }
-        else{
-            Getimages();
-        }
-    };
+const LIMIT = 20
 
-    const Myobj = async ()=>{
-        try {
-            const urlSearch=`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=9a5c61c508b1d9a6c648f432148134b6&text=${props.query}&per_page=10&page=${page}&format=json&nojsoncallback=1`;
-            const res= await axios(urlSearch);
-            if(isfetchingmore.current){
-                setImages([...images,...res.data.photos.photo])
-                isfetchingmore.current=false;
-                if(res.data.photos.photo.length < 10){
-                    setHasmore(false)
-                }
-            }
-            else{
-            setImages(res.data.photos.photo) 
-            }
-        } 
-        catch (error) {
-            throw error;
-        }   
-    }
-    const Getimages = async ()=>
+const Body = ({ query, deviceData }) => {
+  const [images, setImages] = useState([])
+  const isfetchingmore = useRef(false)
+  const [hasmore, setHasmore] = useState(false)
+  const page = useRef(1)
+  const [clicked, setClicked] = useState(false)
+  const [modalUrl, setModalUrl] = useState("")
+
+  const columns = Array.from(
     {
-        try {
-            const urlRecent=`https://www.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=9a5c61c508b1d9a6c648f432148134b6&per_page=10&page=${page}&format=json&nojsoncallback=1`;
-            const res= await axios(urlRecent);
-            if(isfetchingmore.current){
-                setImages([...images,...res.data.photos.photo])
-                isfetchingmore.current=false;
-                if(res.data.photos.photo.length < 10){
-                    setHasmore(false)
-                }
-            }
-            else{
-                setImages(res.data.photos.photo) 
-            }   
-        } 
-        catch (error) {
-            throw error;
-        }     
+      length:
+        deviceData.width < 576
+          ? 1
+          : deviceData.width < 768
+          ? 2
+          : deviceData.width < 992
+          ? 3
+          : deviceData.width < 1600
+          ? 4
+          : 6,
+    },
+    (v, i) => i
+  )
+
+  const fetchMoreData = () => {
+    page.current = page.current + 1
+    isfetchingmore.current = true
+    if (query !== "") {
+      getSearchbasedImageList()
+    } else {
+      getRecentImageList()
     }
-          
-    useEffect(()=>{
-        page.current=1;
-        if(props.query!==""){
-            Myobj()
-        }
-        else{
-            Getimages();
-        }
-    },[props.query]);
+  }
 
-    return(
-        <div>
-            <div className="cover"></div>
-            {clicked ?
-                <div id="myModal" className="modal">
-                    <div className="modal-content">
-                        <img src={modalUrl} alt="Preview" />
-                        <span className="material-symbols-outlined"
-                            onClick={()=>setClicked(false)}>
-                            close
-                        </span>
-                    </div>
-                </div>  
-                 :null
-            }
-        // implementing Infinite Scroll
-        <InfiniteScroll
-            dataLength= {images.length}
-            next={fetchMoreData}
-            hasMore={hasmore}
-            loader={<h4>Loading...</h4>}
-            endMessage={
-                <p style={{ textAlign: 'center' }}>
-                <b>Yay! You have seen it all</b>
-                </p>
-            }>  
+  const getSearchbasedImageList = () => {
+    axios
+      .get(FLICKER_BASE_URL, {
+        params: {
+          method: FLICKER_METHODS.SEARCH,
+          api_key: process.env.REACT_APP_FLICKER_API_KEY,
+          text: query,
+          per_page: LIMIT,
+          page: page.current,
+          safe_search:1,
+          format: "json",
+          jsoncallback: 1,
+        },
+      })
+      .then((res) => {
+        const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+        if (isfetchingmore.current) {
+          setImages([...images, ...data.photos.photo])
+          isfetchingmore.current = false
+          if (data.photos.photo.length < LIMIT) {
+            setHasmore(false)
+          }
+        } else {
+          setImages(data.photos.photo)
+          if (data.photos.photo.length < LIMIT) {
+            setHasmore(false)
+          }
+        }
+      })
+      .catch((err) => console.error(err))
+  }
 
-            <Row gutter={16} >
-                <Col span={6} flex={4}>
-                {images.map((ele,i)=>{  
-                return (
-                <div key={i}>
-                <img  
-                    src={`https://live.staticflickr.com/${ele.server}/${ele.id}_${ele.secret}.jpg`} 
-                    alt={ele.title} 
-                    onClick={(e)=>{setModalUrl(e.target.src);
-                    setClicked(true)}}
-                />
-                </div>
-                )
-            })}
-                </Col>
-            
-            </Row>
-        </InfiniteScroll>
+  const getRecentImageList = () => {
+    axios
+      .get(FLICKER_BASE_URL, {
+        params: {
+          method: FLICKER_METHODS.GET_RECENT,
+          api_key: process.env.REACT_APP_FLICKER_API_KEY,
+          per_page: LIMIT,
+          page: page.current,
+          safe_search:1,
+          format: "json",
+          jsoncallback: 1,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.substring(2, res.data.length - 1))
+        const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+        if (isfetchingmore.current) {
+          setImages([...images, ...data.photos.photo])
+          isfetchingmore.current = false
+          if (data.photos.photo.length === LIMIT) {
+            setHasmore(true)
+          }
+        } else {
+          setImages(data.photos.photo)
+          if (data.photos.photo.length === LIMIT) {
+            setHasmore(true)
+          }
+        }
+      })
+  }
+
+  useEffect(() => {
+    page.current = 1
+    if (query !== "") {
+      getSearchbasedImageList()
+    } else {
+      getRecentImageList()
+    }
+  }, [query])
+
+  return (
+    <div style={{ padding: "8px" }}>
+      {clicked ? (
+        <div id="myModal" className="modal">
+          <div className="modal-content">
+            <img src={modalUrl} alt="Preview" />
+            <span
+              className="material-symbols-outlined"
+              onClick={() => setClicked(false)}
+            >
+              close
+            </span>
+          </div>
         </div>
-    )
+      ) : null}
+      <InfiniteScroll
+        dataLength={images.length}
+        next={fetchMoreData}
+        hasMore={hasmore}
+        loader={
+          <div style={{ textAlign: "center" }}>
+            <Spin />
+          </div>
+        }
+      >
+        <Row gutter={8}>
+          {columns.map((col, index) => {
+            return (
+              <Col key={index} xs={24} sm={12} md={8} lg={6} xxl={4}>
+                {images.map((ele, i) => {
+                  if (i % columns.length === index)
+                    return (
+                      <img
+                        key={i}
+                        src={`https://live.staticflickr.com/${ele.server}/${ele.id}_${ele.secret}.jpg`}
+                        width="100%"
+                        style={{ marginBottom: "8px", borderRadius: "4px" }}
+                        alt={ele.title}
+                        onClick={(e) => {
+                          setModalUrl(e.target.src)
+                          setClicked(true)
+                        }}
+                      />
+                    )
+                  else return null
+                })}
+              </Col>
+            )
+          })}
+        </Row>
+      </InfiniteScroll>
+    </div>
+  )
 }
-export default Body;
+export default Body

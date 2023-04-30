@@ -1,41 +1,37 @@
-import React,{useCallback, useState} from "react";
-import '../styles/header.css';
-import Dropdown from "./dropdown";
+import React from "react"
+import "../styles/header.css"
 
-
-const Header=(props)=>{
-  const debounce = (func) => {
-    let timer;
-    return (function (...args) {
-      const context = this;
-      if (timer) clearTimeout(timer);
+const Header = ({ handleInputChange }) => {
+  const debounced = () => {
+    let timer
+    return (event) => {
+      if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 600);
-    })
-  };
-  
-  const optimizedFn = useCallback(debounce(props.handleInput), []);
-   
-  return(
-    <>
-      <header className="header">
-        <h1 className="header-title">  Search Photos  </h1>
-        <span>
-          <input  id="input"
-            type="text"
-            placeholder="Type to search photos"
-            onChange={(e)=>{optimizedFn(e.target.value);}}
-          />
-          <span className="material-symbols-outlined" >
-            Search
-          </span>
-            <Dropdown localStore={props.localStore} query={props.query} handleInput={props.handleInput}/>
-        </span>
-      </header>
-    </>
+        handleInputChange(event.target.value)
+      }, 600)
+    }
+  }
+
+  return (
+    <div className="header-container">
+      <p className="header-title"> Search Photos </p>
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <input
+          id="input"
+          type="text"
+          placeholder="Type to search photos"
+          onChange={debounced()}
+        />
+        <span className="material-symbols-outlined">Search</span>
+      </div>
+    </div>
   )
 }
 
-export default Header;
+export default Header
