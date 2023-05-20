@@ -177,7 +177,7 @@ const Body = ({ query, deviceData }) => {
           <div className="modal-content">
             <img src={modalUrl} alt="Preview" style={{padding: "10px"}} />
             <span
-              className="material-symbols-outlined"
+              className="material-symbols-outlined close-icon"
               onClick={() => setClicked(false)}
             >
               close

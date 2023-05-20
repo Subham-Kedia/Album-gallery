@@ -16,7 +16,7 @@
   background-color: whitesmoke;
   padding: 20px;
 }
-.material-symbols-outlined {
+.close-icon {
   font-size: 24px;
   padding: 5px;
   position: absolute;
@@ -24,8 +24,8 @@
   right: 0;
 }
 
-.material-symbols-outlined:hover,
-.material-symbols-outlined:focus {
+.close-icon:hover,
+.close-icon:focus {
   cursor: pointer;
   font-size: 24px;
   padding: 5px;

@@ -55,7 +55,7 @@ const Header = ({ handleInputChange, queriesList }) => {
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
-        <span className="material-symbols-outlined" onClick={handleClickSearch}>
+        <span className="material-symbols-outlined search-icon" onClick={handleClickSearch}>
           Search
         </span>
         {suggestions && suggestions.length > 0 && (

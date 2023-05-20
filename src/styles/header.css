@@ -31,8 +31,14 @@
     border: none;
 }
 
-.material-symbols-outlined{
+.search-icon{
     color: black;
     padding: 7px;
-    margin-left:-40px;
+    margin-left:-38px;
+}
+.search-icon:hover,
+.search-icon:focus {
+  cursor: pointer;
+  background-color: lightgray;
+  border-radius: 50%;
 }
