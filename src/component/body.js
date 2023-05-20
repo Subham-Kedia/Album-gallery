@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react"
+import axios from "axios"
 import InfiniteScroll from "react-infinite-scroll-component"
+
 import { Row, Col, Spin } from "antd"
 
 import { FLICKER_BASE_URL } from "../data/urls"
 import { FLICKER_METHODS } from "../data/constants"
 
-import axios from "axios"
 import "../styles/body.css"
 
 const LIMIT = 20
@@ -90,7 +91,6 @@ const Body = ({ query, deviceData }) => {
         },
       })
       .then((res) => {
-        console.log(res.data.substring(2, res.data.length - 1))
         const data = JSON.parse(res.data.substring(2, res.data.length - 1))
         if (isfetchingmore.current) {
           setImages([...images, ...data.photos.photo])
@@ -110,7 +110,7 @@ const Body = ({ query, deviceData }) => {
   useEffect(() => {
     page.current = 1
     if (query !== "") {
-        axios
+      axios
         .get(FLICKER_BASE_URL, {
           params: {
             method: FLICKER_METHODS.SEARCH,
@@ -126,7 +126,7 @@ const Body = ({ query, deviceData }) => {
         .then((res) => {
           const data = JSON.parse(res.data.substring(2, res.data.length - 1))
           if (isfetchingmore.current) {
-            setImages(prevData => ([...prevData, ...data.photos.photo]))
+            setImages((prevData) => [...prevData, ...data.photos.photo])
             isfetchingmore.current = false
             if (data.photos.photo.length < LIMIT) {
               setHasmore(false)
@@ -140,7 +140,7 @@ const Body = ({ query, deviceData }) => {
         })
         .catch((err) => console.error(err))
     } else {
-        axios
+      axios
         .get(FLICKER_BASE_URL, {
           params: {
             method: FLICKER_METHODS.GET_RECENT,
@@ -153,10 +153,9 @@ const Body = ({ query, deviceData }) => {
           },
         })
         .then((res) => {
-          console.log(res.data.substring(2, res.data.length - 1))
           const data = JSON.parse(res.data.substring(2, res.data.length - 1))
           if (isfetchingmore.current) {
-            setImages(prevData => ([...prevData, ...data.photos.photo]))
+            setImages((prevData) => [...prevData, ...data.photos.photo])
             isfetchingmore.current = false
             if (data.photos.photo.length === LIMIT) {
               setHasmore(true)
