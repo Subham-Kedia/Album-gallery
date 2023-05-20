@@ -4,9 +4,10 @@ import "../styles/dropdown.css"
 const Dropdown = ({ suggestions, handleClick }) => {
   return (
     <div className="dropdown">
-      {suggestions.map((ele, i) => {
+      {suggestions.map((ele, index) => {
+        if (index >= 10) return null
         return (
-          <li key={i} onClick={() => handleClick(ele)}>
+          <li key={index} onClick={() => handleClick(ele)}>
             {ele}
           </li>
         )

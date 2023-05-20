@@ -175,7 +175,7 @@ const Body = ({ query, deviceData }) => {
       {clicked ? (
         <div id="myModal" className="modal">
           <div className="modal-content">
-            <img src={modalUrl} alt="Preview" />
+            <img src={modalUrl} alt="Preview" style={{padding: "10px"}} />
             <span
               className="material-symbols-outlined"
               onClick={() => setClicked(false)}

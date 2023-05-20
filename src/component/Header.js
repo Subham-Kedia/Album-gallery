@@ -1,14 +1,21 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState } from "react"
 
 import Dropdown from "./dropdown"
 import "../styles/header.css"
 
-const Header = ({ handleInputChange, query, queriesList }) => {
+const Header = ({ handleInputChange, queriesList }) => {
   const [suggestions, setSuggestions] = useState([])
-  const inputRef = useRef(null)
+  const [query, setQuery] = useState("")
 
-  useEffect(() => {
-    if (query) {
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      handleClickSearch()
+    }
+  }
+
+  const handleQueryChange = (event) => {
+    setQuery(event.target.value)
+    if (event.target.value) {
       setSuggestions(
         queriesList.filter((item) =>
           item.toLowerCase().includes(query.toLowerCase())
@@ -17,21 +24,17 @@ const Header = ({ handleInputChange, query, queriesList }) => {
     } else {
       setSuggestions([])
     }
-  }, [query, queriesList])
+  }
 
-  const debounced = () => {
-    let timer
-    return (event) => {
-      if (timer) clearTimeout(timer)
-      timer = setTimeout(() => {
-        handleInputChange(event.target.value)
-      }, 600)
-    }
+  const handleClickSearch = () => {
+    handleInputChange(query)
+    setSuggestions([])
   }
 
   const handleClickSuggestion = (value) => {
+    setQuery(value)
     handleInputChange(value)
-    if (inputRef) inputRef.current.value = value
+    setSuggestions([])
   }
 
   return (
@@ -48,10 +51,13 @@ const Header = ({ handleInputChange, query, queriesList }) => {
           id="input"
           type="text"
           placeholder="Type to search photos"
-          ref={inputRef}
-          onChange={debounced()}
+          value={query}
+          onChange={handleQueryChange}
+          onKeyDown={handleKeyDown}
         />
-        <span className="material-symbols-outlined">Search</span>
+        <span className="material-symbols-outlined" onClick={handleClickSearch}>
+          Search
+        </span>
         {suggestions && suggestions.length > 0 && (
           <Dropdown
             suggestions={suggestions}
