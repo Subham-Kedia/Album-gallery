@@ -36,6 +36,7 @@ const Body = ({ query, deviceData }) => {
   )
 
   const fetchMoreData = () => {
+    "i was called"
     page.current = page.current + 1
     isfetchingmore.current = true
     if (query !== "") {
@@ -171,11 +172,18 @@ const Body = ({ query, deviceData }) => {
   }, [query])
 
   return (
-    <div style={{ padding: "8px" }}>
+    <div
+      id="bodyContainer"
+      style={{
+        margin: "8px",
+        height: "calc(100vh - 140px)",
+        overflow: "auto",
+      }}
+    >
       {clicked ? (
         <div id="myModal" className="modal">
           <div className="modal-content">
-            <img src={modalUrl} alt="Preview" style={{padding: "10px"}} />
+            <img src={modalUrl} alt="Preview" style={{ padding: "10px" }} />
             <span
               className="material-symbols-outlined close-icon"
               onClick={() => setClicked(false)}
@@ -186,9 +194,12 @@ const Body = ({ query, deviceData }) => {
         </div>
       ) : null}
       <InfiniteScroll
+        scrollableTarget="bodyContainer"
+        style={{ overflow: "hidden" }}
         dataLength={images.length}
         next={fetchMoreData}
         hasMore={hasmore}
+        scrollThreshold={0.9}
         loader={
           <div style={{ textAlign: "center" }}>
             <Spin />
