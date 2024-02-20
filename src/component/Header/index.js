@@ -5,7 +5,7 @@ import "../../styles/header.css";
 
 const Header = ({ handleInputChange, queriesList }) => {
   const [suggestions, setSuggestions] = useState([]);
-  const [query, setQuery] = useState("");
+  const [textInput, setTextInput] = useState("");
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13 && !e.shiftKey) {
@@ -14,11 +14,11 @@ const Header = ({ handleInputChange, queriesList }) => {
   };
 
   const handleQueryChange = (event) => {
-    setQuery(event.target.value);
+    setTextInput(event.target.value);
     if (event.target.value) {
       setSuggestions(
         queriesList.filter((item) =>
-          item.toLowerCase().includes(query.toLowerCase())
+          item.toLowerCase().includes(textInput.toLowerCase())
         )
       );
     } else {
@@ -27,12 +27,12 @@ const Header = ({ handleInputChange, queriesList }) => {
   };
 
   const handleClickSearch = () => {
-    handleInputChange(query);
+    handleInputChange(textInput);
     setSuggestions([]);
   };
 
   const handleClickSuggestion = (value) => {
-    setQuery(value);
+    setTextInput(value);
     handleInputChange(value);
     setSuggestions([]);
   };
@@ -51,7 +51,7 @@ const Header = ({ handleInputChange, queriesList }) => {
           id="input"
           type="text"
           placeholder="Type to search photos"
-          value={query}
+          value={textInput}
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
