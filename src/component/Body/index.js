@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { Row, Col, Spin } from "antd";
 
 import "../../styles/body.css";
 import FLICKERAPI from "../../Services/flicker";
+import { DeviceContext } from "../../data/context";
 
 const LIMIT = 20;
 
-const Body = ({ query, deviceData }) => {
+const Body = ({ query }) => {
+  const deviceData = useContext(DeviceContext);
   const [images, setImages] = useState([]);
   const isfetchingmore = useRef(false);
   const [hasmore, setHasmore] = useState(false);

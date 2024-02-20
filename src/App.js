@@ -6,9 +6,10 @@ import "./App.css";
 import Header from "./component/Header";
 import Body from "./component/Body";
 import Footer from "./component/Footer";
+import { DeviceContext } from "./data/context";
 
 function App() {
-  const [userInput, setUserInput] = useState("");
+  const [userQuery, setUserInput] = useState("");
   const [deviceData, setDeviceData] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -56,15 +57,11 @@ function App() {
   }, []);
 
   return (
-    <>
-      <Header
-        handleInputChange={handleInputChange}
-        query={userInput}
-        queriesList={queriesList}
-      />
-      <Body query={userInput} deviceData={deviceData} />
+    <DeviceContext.Provider value={deviceData}>
+      <Header handleInputChange={handleInputChange} queriesList={queriesList} />
+      <Body query={userQuery} />
       <Footer />
-    </>
+    </DeviceContext.Provider>
   );
 }
 
