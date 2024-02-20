@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import { Row, Col, Spin } from "antd";
 
-import { FLICKER_BASE_URL } from "../../data/urls";
-import { FLICKER_METHODS } from "../../data/constants";
-
 import "../../styles/body.css";
+import FLICKERAPI from "../../Services/flicker";
 
 const LIMIT = 20;
 
@@ -36,7 +33,6 @@ const Body = ({ query, deviceData }) => {
   );
 
   const fetchMoreData = () => {
-    "i was called";
     page.current = page.current + 1;
     isfetchingmore.current = true;
     if (query !== "") {
@@ -47,19 +43,7 @@ const Body = ({ query, deviceData }) => {
   };
 
   const getSearchbasedImageList = () => {
-    axios
-      .get(FLICKER_BASE_URL, {
-        params: {
-          method: FLICKER_METHODS.SEARCH,
-          api_key: process.env.REACT_APP_FLICKER_API_KEY,
-          text: query,
-          per_page: LIMIT,
-          page: page.current,
-          safe_search: 1,
-          format: "json",
-          jsoncallback: 1,
-        },
-      })
+    FLICKERAPI.getPhotosBySearchText(page.current, query, LIMIT)
       .then((res) => {
         const data = JSON.parse(res.data.substring(2, res.data.length - 1));
         if (isfetchingmore.current) {
@@ -79,51 +63,27 @@ const Body = ({ query, deviceData }) => {
   };
 
   const getRecentImageList = () => {
-    axios
-      .get(FLICKER_BASE_URL, {
-        params: {
-          method: FLICKER_METHODS.GET_RECENT,
-          api_key: process.env.REACT_APP_FLICKER_API_KEY,
-          per_page: LIMIT,
-          page: page.current,
-          safe_search: 1,
-          format: "json",
-          jsoncallback: 1,
-        },
-      })
-      .then((res) => {
-        const data = JSON.parse(res.data.substring(2, res.data.length - 1));
-        if (isfetchingmore.current) {
-          setImages([...images, ...data.photos.photo]);
-          isfetchingmore.current = false;
-          if (data.photos.photo.length === LIMIT) {
-            setHasmore(true);
-          }
-        } else {
-          setImages(data.photos.photo);
-          if (data.photos.photo.length === LIMIT) {
-            setHasmore(true);
-          }
+    FLICKERAPI.getRecentPhotos(page.current, LIMIT).then((res) => {
+      const data = JSON.parse(res.data.substring(2, res.data.length - 1));
+      if (isfetchingmore.current) {
+        setImages([...images, ...data.photos.photo]);
+        isfetchingmore.current = false;
+        if (data.photos.photo.length === LIMIT) {
+          setHasmore(true);
         }
-      });
+      } else {
+        setImages(data.photos.photo);
+        if (data.photos.photo.length === LIMIT) {
+          setHasmore(true);
+        }
+      }
+    });
   };
 
   useEffect(() => {
     page.current = 1;
     if (query !== "") {
-      axios
-        .get(FLICKER_BASE_URL, {
-          params: {
-            method: FLICKER_METHODS.SEARCH,
-            api_key: process.env.REACT_APP_FLICKER_API_KEY,
-            text: query,
-            per_page: LIMIT,
-            page: page.current,
-            safe_search: 1,
-            format: "json",
-            jsoncallback: 1,
-          },
-        })
+      FLICKERAPI.getPhotosBySearchText(page.current, query, LIMIT)
         .then((res) => {
           const data = JSON.parse(res.data.substring(2, res.data.length - 1));
           if (isfetchingmore.current) {
@@ -141,33 +101,21 @@ const Body = ({ query, deviceData }) => {
         })
         .catch((err) => console.error(err));
     } else {
-      axios
-        .get(FLICKER_BASE_URL, {
-          params: {
-            method: FLICKER_METHODS.GET_RECENT,
-            api_key: process.env.REACT_APP_FLICKER_API_KEY,
-            per_page: LIMIT,
-            page: page.current,
-            safe_search: 1,
-            format: "json",
-            jsoncallback: 1,
-          },
-        })
-        .then((res) => {
-          const data = JSON.parse(res.data.substring(2, res.data.length - 1));
-          if (isfetchingmore.current) {
-            setImages((prevData) => [...prevData, ...data.photos.photo]);
-            isfetchingmore.current = false;
-            if (data.photos.photo.length === LIMIT) {
-              setHasmore(true);
-            }
-          } else {
-            setImages(data.photos.photo);
-            if (data.photos.photo.length === LIMIT) {
-              setHasmore(true);
-            }
+      FLICKERAPI.getRecentPhotos(page.current, LIMIT).then((res) => {
+        const data = JSON.parse(res.data.substring(2, res.data.length - 1));
+        if (isfetchingmore.current) {
+          setImages((prevData) => [...prevData, ...data.photos.photo]);
+          isfetchingmore.current = false;
+          if (data.photos.photo.length === LIMIT) {
+            setHasmore(true);
           }
-        });
+        } else {
+          setImages(data.photos.photo);
+          if (data.photos.photo.length === LIMIT) {
+            setHasmore(true);
+          }
+        }
+      });
     }
   }, [query]);
 
