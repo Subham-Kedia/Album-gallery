@@ -1,41 +1,41 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 
-import Dropdown from "./dropdown"
-import "../styles/header.css"
+import Dropdown from "../Dropdown";
+import "../../styles/header.css";
 
 const Header = ({ handleInputChange, queriesList }) => {
-  const [suggestions, setSuggestions] = useState([])
-  const [query, setQuery] = useState("")
+  const [suggestions, setSuggestions] = useState([]);
+  const [query, setQuery] = useState("");
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13 && !e.shiftKey) {
-      handleClickSearch()
+      handleClickSearch();
     }
-  }
+  };
 
   const handleQueryChange = (event) => {
-    setQuery(event.target.value)
+    setQuery(event.target.value);
     if (event.target.value) {
       setSuggestions(
         queriesList.filter((item) =>
           item.toLowerCase().includes(query.toLowerCase())
         )
-      )
+      );
     } else {
-      setSuggestions([])
+      setSuggestions([]);
     }
-  }
+  };
 
   const handleClickSearch = () => {
-    handleInputChange(query)
-    setSuggestions([])
-  }
+    handleInputChange(query);
+    setSuggestions([]);
+  };
 
   const handleClickSuggestion = (value) => {
-    setQuery(value)
-    handleInputChange(value)
-    setSuggestions([])
-  }
+    setQuery(value);
+    handleInputChange(value);
+    setSuggestions([]);
+  };
 
   return (
     <div className="header-container">
@@ -55,7 +55,10 @@ const Header = ({ handleInputChange, queriesList }) => {
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
-        <span className="material-symbols-outlined search-icon" onClick={handleClickSearch}>
+        <span
+          className="material-symbols-outlined search-icon"
+          onClick={handleClickSearch}
+        >
           Search
         </span>
         {suggestions && suggestions.length > 0 && (
@@ -66,7 +69,7 @@ const Header = ({ handleInputChange, queriesList }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useRef } from "react"
-import axios from "axios"
-import InfiniteScroll from "react-infinite-scroll-component"
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-import { Row, Col, Spin } from "antd"
+import { Row, Col, Spin } from "antd";
 
-import { FLICKER_BASE_URL } from "../data/urls"
-import { FLICKER_METHODS } from "../data/constants"
+import { FLICKER_BASE_URL } from "../../data/urls";
+import { FLICKER_METHODS } from "../../data/constants";
 
-import "../styles/body.css"
+import "../../styles/body.css";
 
-const LIMIT = 20
+const LIMIT = 20;
 
 const Body = ({ query, deviceData }) => {
-  const [images, setImages] = useState([])
-  const isfetchingmore = useRef(false)
-  const [hasmore, setHasmore] = useState(false)
-  const page = useRef(1)
-  const [clicked, setClicked] = useState(false)
-  const [modalUrl, setModalUrl] = useState("")
+  const [images, setImages] = useState([]);
+  const isfetchingmore = useRef(false);
+  const [hasmore, setHasmore] = useState(false);
+  const page = useRef(1);
+  const [clicked, setClicked] = useState(false);
+  const [modalUrl, setModalUrl] = useState("");
 
   const columns = Array.from(
     {
@@ -33,18 +33,18 @@ const Body = ({ query, deviceData }) => {
           : 6,
     },
     (v, i) => i
-  )
+  );
 
   const fetchMoreData = () => {
-    "i was called"
-    page.current = page.current + 1
-    isfetchingmore.current = true
+    "i was called";
+    page.current = page.current + 1;
+    isfetchingmore.current = true;
     if (query !== "") {
-      getSearchbasedImageList()
+      getSearchbasedImageList();
     } else {
-      getRecentImageList()
+      getRecentImageList();
     }
-  }
+  };
 
   const getSearchbasedImageList = () => {
     axios
@@ -61,22 +61,22 @@ const Body = ({ query, deviceData }) => {
         },
       })
       .then((res) => {
-        const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+        const data = JSON.parse(res.data.substring(2, res.data.length - 1));
         if (isfetchingmore.current) {
-          setImages([...images, ...data.photos.photo])
-          isfetchingmore.current = false
+          setImages([...images, ...data.photos.photo]);
+          isfetchingmore.current = false;
           if (data.photos.photo.length < LIMIT) {
-            setHasmore(false)
+            setHasmore(false);
           }
         } else {
-          setImages(data.photos.photo)
+          setImages(data.photos.photo);
           if (data.photos.photo.length < LIMIT) {
-            setHasmore(false)
+            setHasmore(false);
           }
         }
       })
-      .catch((err) => console.error(err))
-  }
+      .catch((err) => console.error(err));
+  };
 
   const getRecentImageList = () => {
     axios
@@ -92,24 +92,24 @@ const Body = ({ query, deviceData }) => {
         },
       })
       .then((res) => {
-        const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+        const data = JSON.parse(res.data.substring(2, res.data.length - 1));
         if (isfetchingmore.current) {
-          setImages([...images, ...data.photos.photo])
-          isfetchingmore.current = false
+          setImages([...images, ...data.photos.photo]);
+          isfetchingmore.current = false;
           if (data.photos.photo.length === LIMIT) {
-            setHasmore(true)
+            setHasmore(true);
           }
         } else {
-          setImages(data.photos.photo)
+          setImages(data.photos.photo);
           if (data.photos.photo.length === LIMIT) {
-            setHasmore(true)
+            setHasmore(true);
           }
         }
-      })
-  }
+      });
+  };
 
   useEffect(() => {
-    page.current = 1
+    page.current = 1;
     if (query !== "") {
       axios
         .get(FLICKER_BASE_URL, {
@@ -125,21 +125,21 @@ const Body = ({ query, deviceData }) => {
           },
         })
         .then((res) => {
-          const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+          const data = JSON.parse(res.data.substring(2, res.data.length - 1));
           if (isfetchingmore.current) {
-            setImages((prevData) => [...prevData, ...data.photos.photo])
-            isfetchingmore.current = false
+            setImages((prevData) => [...prevData, ...data.photos.photo]);
+            isfetchingmore.current = false;
             if (data.photos.photo.length < LIMIT) {
-              setHasmore(false)
+              setHasmore(false);
             }
           } else {
-            setImages(data.photos.photo)
+            setImages(data.photos.photo);
             if (data.photos.photo.length < LIMIT) {
-              setHasmore(false)
+              setHasmore(false);
             }
           }
         })
-        .catch((err) => console.error(err))
+        .catch((err) => console.error(err));
     } else {
       axios
         .get(FLICKER_BASE_URL, {
@@ -154,22 +154,22 @@ const Body = ({ query, deviceData }) => {
           },
         })
         .then((res) => {
-          const data = JSON.parse(res.data.substring(2, res.data.length - 1))
+          const data = JSON.parse(res.data.substring(2, res.data.length - 1));
           if (isfetchingmore.current) {
-            setImages((prevData) => [...prevData, ...data.photos.photo])
-            isfetchingmore.current = false
+            setImages((prevData) => [...prevData, ...data.photos.photo]);
+            isfetchingmore.current = false;
             if (data.photos.photo.length === LIMIT) {
-              setHasmore(true)
+              setHasmore(true);
             }
           } else {
-            setImages(data.photos.photo)
+            setImages(data.photos.photo);
             if (data.photos.photo.length === LIMIT) {
-              setHasmore(true)
+              setHasmore(true);
             }
           }
-        })
+        });
     }
-  }, [query])
+  }, [query]);
 
   return (
     <div
@@ -220,19 +220,19 @@ const Body = ({ query, deviceData }) => {
                         style={{ marginBottom: "8px", borderRadius: "4px" }}
                         alt={ele.title}
                         onClick={(e) => {
-                          setModalUrl(e.target.src)
-                          setClicked(true)
+                          setModalUrl(e.target.src);
+                          setClicked(true);
                         }}
                       />
-                    )
-                  else return null
+                    );
+                  else return null;
                 })}
               </Col>
-            )
+            );
           })}
         </Row>
       </InfiniteScroll>
     </div>
-  )
-}
-export default Body
+  );
+};
+export default Body;
