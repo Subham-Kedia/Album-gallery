@@ -3,16 +3,17 @@
   top: 101%;
   background-color: white;
   color: black;
-  width: calc(40% - 40px);
+  width: calc(40% - 34px);
   max-width: 460px;
   min-width: 260px;
   text-align: left;
+  border-top: 0.5px solid lightgray;
 }
 li {
   list-style-type: none;
-  border-bottom: 0.5px solid black;
-  border-left: 0.5px solid black;
-  border-right: 0.5px solid black;
+  border-bottom: 0.5px solid lightgray;
+  border-left: 0.5px solid lightgray;
+  border-right: 0.5px solid lightgray;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: lighter;

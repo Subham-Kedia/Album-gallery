@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 
 import Dropdown from "../Dropdown";
+import { getDataFromLocalStorage } from "../../data/utils";
+import { LOCAL_STORAGE_KEYS } from "../../data/constants";
 import "../../styles/header.css";
 
-const Header = ({ handleInputChange, queriesList }) => {
-  const [suggestions, setSuggestions] = useState([]);
+const Header = ({ handleInputChange }) => {
+  const [suggestions, setSuggestions] = useState(
+    getDataFromLocalStorage(LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES, [])
+  );
   const [textInput, setTextInput] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13 && !e.shiftKey) {
@@ -15,26 +20,23 @@ const Header = ({ handleInputChange, queriesList }) => {
 
   const handleQueryChange = (event) => {
     setTextInput(event.target.value);
-    if (event.target.value) {
-      setSuggestions(
-        queriesList.filter((item) =>
-          item.toLowerCase().includes(textInput.toLowerCase())
-        )
-      );
-    } else {
-      setSuggestions([]);
-    }
   };
 
   const handleClickSearch = () => {
     handleInputChange(textInput);
-    setSuggestions([]);
+    const updateSuggestions = [...suggestions, textInput];
+    setSuggestions(updateSuggestions);
+    localStorage.setItem(
+      LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
+      JSON.stringify(updateSuggestions)
+    );
+    setIsFocused(false);
   };
 
   const handleClickSuggestion = (value) => {
     setTextInput(value);
     handleInputChange(value);
-    setSuggestions([]);
+    setIsFocused(false);
   };
 
   return (
@@ -52,6 +54,12 @@ const Header = ({ handleInputChange, queriesList }) => {
           type="text"
           placeholder="Type to search photos"
           value={textInput}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={(e) => {
+            if (e.relatedTarget.className !== "dropdown") setIsFocused(false);
+          }}
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
         />
@@ -63,6 +71,8 @@ const Header = ({ handleInputChange, queriesList }) => {
         </span>
         {suggestions && suggestions.length > 0 && (
           <Dropdown
+            isFocused={isFocused}
+            query={textInput}
             suggestions={suggestions}
             handleClick={handleClickSuggestion}
           />

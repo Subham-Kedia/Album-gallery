@@ -157,7 +157,7 @@ const Body = ({ query }) => {
         }
       >
         <Row gutter={8}>
-          {columns.map((col, index) => {
+          {columns.map((_, index) => {
             return (
               <Col key={index} xs={24} sm={12} md={8} lg={6} xxl={4}>
                 {images.map((ele, i) => {

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { LOCAL_STORAGE_KEYS } from "./data/constants";
-import { getDataFromLocalStorage } from "./data/utils";
 import "./App.css";
 import Header from "./component/Header";
 import Body from "./component/Body";
@@ -14,26 +12,23 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [queriesList, setQueriesList] = useState(
-    getDataFromLocalStorage(LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES, [])
-  );
 
   const handleInputChange = (ele) => {
     setUserInput(ele);
-    if (ele.length > 3) {
-      const QueriesList = getDataFromLocalStorage(
-        LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
-        []
-      );
-      if (!QueriesList.includes(ele)) {
-        QueriesList.push(ele);
-        localStorage.setItem(
-          LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
-          JSON.stringify(QueriesList)
-        );
-        setQueriesList(QueriesList);
-      }
-    }
+    // if (ele.length > 3) {
+    //   const QueriesList = getDataFromLocalStorage(
+    //     LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
+    //     []
+    //   );
+    //   if (!QueriesList.includes(ele)) {
+    //     QueriesList.push(ele);
+    //     localStorage.setItem(
+    //       LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
+    //       JSON.stringify(QueriesList)
+    //     );
+    //     setQueriesList(QueriesList);
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -46,7 +41,7 @@ function App() {
             width: event.target.innerWidth,
             height: event.target.innerHeight,
           });
-        }, 700);
+        }, 200);
       };
     };
     window.addEventListener("resize", handleResizeListener());
@@ -58,7 +53,7 @@ function App() {
 
   return (
     <DeviceContext.Provider value={deviceData}>
-      <Header handleInputChange={handleInputChange} queriesList={queriesList} />
+      <Header handleInputChange={handleInputChange} />
       <Body query={userQuery} />
       <Footer />
     </DeviceContext.Provider>
