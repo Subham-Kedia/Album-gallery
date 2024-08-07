@@ -11,4 +11,4 @@ A fully responsive album gallery to find your favourite pictures implemented usi
 
 ### Deployed At
 
-Feel free check at [https://find-your-dreams.netlify.app](https://subham-kedia.github.io/album-gallery/)
+Feel free check at https://subham-kedia.github.io/album-gallery/
