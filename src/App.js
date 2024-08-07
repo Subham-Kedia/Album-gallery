@@ -7,32 +7,18 @@ import Footer from "./component/Footer";
 import { DeviceContext } from "./data/context";
 
 function App() {
-  const [userQuery, setUserInput] = useState("");
+  const [userQuery, setUserQuery] = useState("");
   const [deviceData, setDeviceData] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
 
-  const handleInputChange = (ele) => {
-    setUserInput(ele);
-    // if (ele.length > 3) {
-    //   const QueriesList = getDataFromLocalStorage(
-    //     LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
-    //     []
-    //   );
-    //   if (!QueriesList.includes(ele)) {
-    //     QueriesList.push(ele);
-    //     localStorage.setItem(
-    //       LOCAL_STORAGE_KEYS.ALB_GAL_QUERIES,
-    //       JSON.stringify(QueriesList)
-    //     );
-    //     setQueriesList(QueriesList);
-    //   }
-    // }
+  const handleInputChange = (query) => {
+    setUserQuery(query);
   };
 
   useEffect(() => {
-    const handleResizeListener = (event) => {
+    const handleResizeListener = () => {
       let timer;
       return (event) => {
         if (timer) clearTimeout(timer);

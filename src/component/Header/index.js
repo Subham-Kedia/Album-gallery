@@ -20,6 +20,7 @@ const Header = ({ handleInputChange }) => {
 
   const handleQueryChange = (event) => {
     setTextInput(event.target.value);
+    setIsFocused(true)
   };
 
   const handleClickSearch = () => {
@@ -58,10 +59,11 @@ const Header = ({ handleInputChange }) => {
             setIsFocused(true);
           }}
           onBlur={(e) => {
-            if (e.relatedTarget.className !== "dropdown") setIsFocused(false);
+            if (e.relatedTarget?.className !== "dropdown") setIsFocused(false);
           }}
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
+          autoComplete="off"
         />
         <span
           className="material-symbols-outlined search-icon"
